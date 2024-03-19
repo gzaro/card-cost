@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/222222",
+    "headers": {
+      "Accept-Version": {
+        "contains": "3"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "body": "",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

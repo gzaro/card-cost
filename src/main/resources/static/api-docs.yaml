@@ -1,0 +1,148 @@
+openapi: 3.0.1
+info:
+  title: Card cost API specification
+  version: v1.0.0
+  description: |-
+    This API is used for calculating the clearing cost of a given card.
+    The calculation is based on the origin country of the card issuer.
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Clearing cost
+    description: Card clearing cost per country
+  - name: Card Clearing cost
+    description: Clearing cost calculation
+paths:
+  /clearing-cost:
+    get:
+      tags:
+        - Clearing cost
+      summary: Get a list of card clearing costs by country
+      operationId: getAllCountryCosts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Country"
+  /clearing-cost/{alpha2}:
+    get:
+      tags:
+        - Clearing cost
+      summary: Get the card clearing cost of a country
+      operationId: getSingleCountryCost
+      parameters:
+        - name: alpha2
+          in: path
+          description: ISO 3166-1 alpha-2 country code
+          required: true
+          schema:
+            pattern: "^[A-Z]{2}$"
+            type: string
+      responses:
+        "404":
+          description: Unknown country code
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+    put:
+      tags:
+        - Clearing cost
+      summary: Update the card clearing cost of a country
+      operationId: UpdateCountryClearingCost
+      parameters:
+        - name: alpha2
+          in: path
+          description: ISO 3166-1 alpha-2 country code
+          required: true
+          schema:
+            pattern: "^[A-Z]{2}$"
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClearingCostUpdateRequest"
+        required: true
+      responses:
+        "404":
+          description: Unknown country code
+        "204":
+          description: Clearing cost updated successfully
+  /payment-cards-cost:
+    post:
+      tags:
+        - Card Clearing cost
+      summary: Clearing cost calculation of a specific card
+      operationId: getCardClearingCost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardCostRequest"
+        required: true
+      responses:
+        "404":
+          description: Unknown card issuer
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardCostResponse"
+components:
+  schemas:
+    Country:
+      type: object
+      properties:
+        alpha2:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          example: GR
+        alpha3:
+          type: string
+          description: ISO 3166-1 alpha-3 country code
+          example: GRC
+        numeric:
+          type: string
+          description: ISO 3166-1 numeric country code
+          example: 300
+        name:
+          type: string
+          description: Country name
+          example: Greece
+        clearing_cost_usd:
+          type: number
+          description: Card clearing cost in USD
+          example: 15
+    ClearingCostUpdateRequest:
+      type: object
+      properties:
+        clearing_cost:
+          type: number
+          description: Card clearing cost in USD
+          example: 15
+    CardCostRequest:
+      type: object
+      properties:
+        card_number:
+          pattern: "^[0-9]{8,19}$"
+          type: string
+          description: Card number
+    CardCostResponse:
+      type: object
+      properties:
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          example: GR
+        cost:
+          type: number
+          description: Card clearing cost in USD
+          example: 15
