@@ -31,4 +31,4 @@ The service does not implement any significant business logic, so there are no u
 - Local H2 database file is used for clearing cost matrix. In a production environment a real DBMS should be used.
 - Database schema is simple and does not support full CRUD operations.
 - Caching of external service responses could be used.
-- Using a fixed-size cache with TTL could probably be used for limiting external requests (5 per hour for free tier).
+- A fixed-size cache with TTL could probably be used for limiting external requests (5 per hour for free tier).
